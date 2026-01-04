@@ -1,1 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE Mains 45 - Todo List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your existing CSS styles */
+        html {
+            -webkit-print-color-adjust: exact;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        @media only screen {
+            body {
+                margin: 2em auto;
+                max-width: 900px;
+                color: rgb(55, 53, 47);
+            }
+        }
+        body {
+            line-height: 1.5;
+            font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+            position: relative;
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 0.75em;
+            text-align: center;
+            position: relative;
+        }
+        h1, h2, h3 {
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        h1 {
+            font-size: 1.875rem;
+            margin-top: 1.875rem;
+        }
+        .block-color-red {
+            color: #d14646;
+        }
+        .page-body {
+            padding: 20px 0;
+        }
+        
+        /* GitHub Buttons */
+        .github-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .github-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .github-btn:hover {
+            background: #2f363d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .github-btn i {
+            font-size: 18px;
+        }
+        
+        .profile-btn {
+            background: linear-gradient(135deg, #6e48aa, #9d50bb);
+        }
+        
+        .profile-btn:hover {
+            background: linear-gradient(135deg, #7d55bb, #a85ec9);
+        }
+        
+        .repo-btn {
+            background: linear-gradient(135deg, #007acc, #00b4d8);
+        }
+        
+        .repo-btn:hover {
+            background: linear-gradient(135deg, #008de4, #00c6f7);
+        }
+        
+        /* Header with GitHub link */
+        .header-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header-links {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .header-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #586069;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .header-link:hover {
+            background: #f6f8fa;
+            color: #0366d6;
+        }
+        
+        .to-do-list {
+            padding-inline-start: 0;
+            list-style: none;
+            margin: 20px 0;
+        }
+        .to-do-list > li {
+            display: flex;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+        }
+        .checkbox {
+            display: inline-flex;
+            vertical-align: middle;
+            width: 16px;
+            height: 16px;
+            background-size: 16px;
+            margin-right: 12px;
+            margin-top: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .checkbox-on {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+        }
+        .checkbox-off {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+        }
+        .to-do-children-checked {
+            text-decoration: line-through;
+            opacity: 0.6;
+            color: #888;
+        }
+        .to-do-children-unchecked {
+            text-decoration: none;
+            opacity: 1;
+        }
+        .todo-text {
+            flex: 1;
+            line-height: 1.4;
+        }
+        .indented {
+            padding-left: 1.5em;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .code {
+            background: rgba(135, 131, 120, 0.15);
+            border-radius: 3px;
+            padding: 0.2em 0.4em;
+            font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace;
+            font-size: 85%;
+            margin: 10px 0;
+        }
+        .code-wrap {
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #58a9d7;
+        }
+        .section-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 30px 0 15px 0;
+            border-left: 4px solid #d14646;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #58a9d7;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #58a9d7;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #eaeaea;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .footer a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .github-buttons {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                margin-bottom: 20px;
+                top: auto;
+                right: auto;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-links {
+                position: static;
+                transform: none;
+                margin-bottom: 15px;
+            }
+            
+            .page-title {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- GitHub Buttons in Top Right Corner -->
+    <div class="github-buttons">
+        <a href="https://github.com/rox991" target="_blank" class="github-btn profile-btn">
+            <i class="fab fa-github"></i>
+            <span>@rox991</span>
+        </a>
+        <a href="https://github.com/rox991/45_sin" target="_blank" class="github-btn repo-btn">
+            <i class="fas fa-code-branch"></i>
+            <span>JEE 45 Repo</span>
+        </a>
+    </div>
+    
+    <div class="page sans">
+        <header>
+            <div class="header-container">
+                <div class="header-links">
+                    <a href="https://github.com/rox991" target="_blank" class="header-link">
+                        <i class="fab fa-github"></i>
+                        rox991
+                    </a>
+                    <a href="https://github.com/rox991/45" target="_blank" class="header-link">
+                        <i class="fas fa-book"></i>
+                        JEE 45 Repo
+                    </a>
+                </div>
+                <h1 class="page-title">JEE Mains 45-Day Challenge</h1>
+            </div>
+        </header>
+        
+        <div class="page-body">
+            <!-- Progress Stats -->
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-tasks">0</div>
+                    <div class="stat-label">Total Topics</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="completed-tasks">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="remaining-tasks">0</div>
+                    <div class="stat-label">Remaining</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
 
+            <!-- Math Section -->
+            <div class="section-header">
+                <h1 class="block-color-red"># Math : [ 14 Topics ]</h1>
+            </div>
+            
+            <div class="code-wrap">
+                <code>npm install math in mind for this few days .. pls ()</code>
+            </div>
+            
+            <ul class="to-do-list" id="math-todos">
+                <!-- Math todos will be populated by JavaScript -->
+            </ul>
+
+            <!-- Physics Section -->
+            <div class="section-header">
+                <h1 class="block-color-red"># Physics : [ 19 Topics ]</h1>
+            </div>
+            
+            <div class="code-wrap">
+                <code>cd physics
+chmod +x physics.sh
+pip install -r requirements.txt
+bash physics.sh</code>
+            </div>
+            
+            <ul class="to-do-list" id="physics-todos">
+                <!-- Physics todos will be populated by JavaScript -->
+            </ul>
+
+            <!-- Chemistry Section -->
+            <div class="section-header">
+                <h1 class="block-color-red"># Chemistry : [ 16 Topics ]</h1>
+            </div>
+            
+            <div class="code-wrap">
+                <code>git clone https://github.com/JEE_MAINS/Chemistry.git
+cd Chemistry
+pip install -r requirements.txt
+python3 chemistry.py</code>
+            </div>
+            
+            <ul class="to-do-list" id="chemistry-todos">
+                <!-- Chemistry todos will be populated by JavaScript -->
+            </ul>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>JEE Mains 45-Day Challenge • Created by <a href="https://github.com/rox991" target="_blank">@rox991</a></p>
+                <p>Repository: <a href="https://github.com/rox991/45" target="_blank">github.com/rox991/45</a></p>
+                <p>Progress is automatically saved in your browser's local storage</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Todo list data
+        const todos = {
+            math: [
+                "Quadratic Equations + 20-30 PYQ",
+                "Sets, Relations & Function + 20-30 PYQ",
+                "Sequence and Series + 20-30 PYQ",
+                "Vectors + 20-30 PYQ",
+                "Straight lines & pair of straight lines + 20-30 PYQ",
+                "Ellipse and Hyperbola + 20-30 PYQ",
+                "Limits and Derivatives + 20-30 PYQ",
+                "Matrices and Determinants + 20-30 PYQ",
+                "Application of Derivatives + 20-30 PYQ",
+                "Indefinite Integration + 20-30 PYQ",
+                "Definite Integration + 20-30 PYQ",
+                "Area under curves + 20-30 PYQ",
+                "Differential Equation + 20-30 PYQ",
+                "3D Geometry + 20-30 PYQ"
+            ],
+            physics: [
+                "Units and Measurements + 20-30 PYQ",
+                "Motion in a Straight Line + 20-30 PYQ",
+                "Motion in a Plane + 20-30 PYQ",
+                "Motion in a Straight Line + 20-30 PYQ", // Duplicate in original
+                "Laws of Motion + 20-30 PYQ",
+                "Work, Energy and Power + 20-30 PYQ",
+                "Rotational Motion + 20-30 PYQ",
+                "Gravitation + 20-30 PYQ",
+                "Kinetic Theory of Gases + 20-30 PYQ",
+                "Thermodynamics + 20-30 PYQ",
+                "Electrostatics + 20-30 PYQ",
+                "Current Electricity + 20-30 PYQ",
+                "Magnetic Effects of Current + 20-30 PYQ",
+                "Alternating Current + 20-30 PYQ",
+                "Ray Optics + 20-30 PYQ",
+                "Wave Optics + 20-30 PYQ",
+                "Atoms + 20-30 PYQ",
+                "Nuclei + 20-30 PYQ",
+                "Semiconductors, Electronic Devices and Logic Gates + 20-30 PYQ"
+            ],
+            chemistry: [
+                "Structure of Atom + 20-30 PYQ",
+                "Periodic Properties + 20-30 PYQ",
+                "Chemical Bonding + 20-30 PYQ",
+                "Mole & Equivalent concept + 20-30 PYQ",
+                "Thermodynamics and Thermochemistry + 20-30 PYQ",
+                "Chemical Equilibrium + 20-30 PYQ",
+                "Solutions + 20-30 PYQ",
+                "Chemical Kinetics + 20-30 PYQ",
+                "Electrochemistry + 20-30 PYQ",
+                "Alcohols, Phenols and Ethers + 20-30 PYQ",
+                "Aldehydes and Ketones + 20-30 PYQ",
+                "p-block elements (group 13 and 14) + 20-30 PYQ",
+                "General Organic Chemistry + 20-30 PYQ",
+                "Practical Chemistry + 20-30 PYQ",
+                "General Organic Chemistry (Revision) & Isomerism + 20-30 PYQ",
+                "p -block Elements (group 15-18) + 20-30 PYQ"
+            ]
+        };
+
+        // Load saved state from localStorage
+        let todoState = JSON.parse(localStorage.getItem('jeeTodoState')) || {
+            math: Array(todos.math.length).fill(false),
+            physics: Array(todos.physics.length).fill(false),
+            chemistry: Array(todos.chemistry.length).fill(false)
+        };
+
+        // Initialize the todo lists
+        function initializeTodos() {
+            renderTodoList('math', 'math-todos');
+            renderTodoList('physics', 'physics-todos');
+            renderTodoList('chemistry', 'chemistry-todos');
+            updateStats();
+        }
+
+        // Render a todo list
+        function renderTodoList(section, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            todos[section].forEach((todo, index) => {
+                const isChecked = todoState[section][index];
+                const li = document.createElement('li');
+                
+                li.innerHTML = `
+                    <div class="checkbox ${isChecked ? 'checkbox-on' : 'checkbox-off'}" 
+                         data-section="${section}" 
+                         data-index="${index}"></div>
+                    <span class="todo-text ${isChecked ? 'to-do-children-checked' : 'to-do-children-unchecked'}">
+                        ${todo}
+                    </span>
+                `;
+                
+                container.appendChild(li);
+            });
+            
+            // Add event listeners to checkboxes
+            container.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.addEventListener('click', toggleTodo);
+            });
+        }
+
+        // Toggle todo state
+        function toggleTodo(event) {
+            const checkbox = event.currentTarget;
+            const section = checkbox.dataset.section;
+            const index = parseInt(checkbox.dataset.index);
+            
+            // Toggle the state
+            todoState[section][index] = !todoState[section][index];
+            
+            // Update the UI
+            if (todoState[section][index]) {
+                checkbox.classList.remove('checkbox-off');
+                checkbox.classList.add('checkbox-on');
+                checkbox.nextElementSibling.classList.remove('to-do-children-unchecked');
+                checkbox.nextElementSibling.classList.add('to-do-children-checked');
+            } else {
+                checkbox.classList.remove('checkbox-on');
+                checkbox.classList.add('checkbox-off');
+                checkbox.nextElementSibling.classList.remove('to-do-children-checked');
+                checkbox.nextElementSibling.classList.add('to-do-children-unchecked');
+            }
+            
+            // Save state and update stats
+            saveState();
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            let total = 0;
+            let completed = 0;
+            
+            // Count todos
+            for (const section in todos) {
+                total += todos[section].length;
+                completed += todoState[section].filter(Boolean).length;
+            }
+            
+            const remaining = total - completed;
+            const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            // Update DOM
+            document.getElementById('total-tasks').textContent = total;
+            document.getElementById('completed-tasks').textContent = completed;
+            document.getElementById('remaining-tasks').textContent = remaining;
+            document.getElementById('progress-fill').style.width = `${percentage}%`;
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('jeeTodoState', JSON.stringify(todoState));
+        }
+
+        // Clear all todos (optional reset function)
+        function clearAllTodos() {
+            if (confirm('Are you sure you want to clear all progress?')) {
+                todoState = {
+                    math: Array(todos.math.length).fill(false),
+                    physics: Array(todos.physics.length).fill(false),
+                    chemistry: Array(todos.chemistry.length).fill(false)
+                };
+                saveState();
+                initializeTodos();
+            }
+        }
+
+        // Add a reset button to the page
+        function addResetButton() {
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = 'Reset All Progress';
+            resetBtn.style.cssText = `
+                background: #ff6b6b;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 20px auto;
+                display: block;
+                font-size: 14px;
+            `;
+            resetBtn.onclick = clearAllTodos;
+            document.querySelector('.page-body').appendChild(resetBtn);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTodos();
+            addResetButton();
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + R to reset
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    clearAllTodos();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
